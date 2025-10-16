@@ -6,7 +6,7 @@ type SearchParams = Promise<{ q?: string; categoria?: string; cidade?: string }>
 export default async function BuscarPage(props: { searchParams: SearchParams }) {
   const { q, categoria, cidade } = await props.searchParams;
 
-  let where: any = {};
+  const where: Record<string, any> = {};
   
   if (q) {
     where.OR = [
