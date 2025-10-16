@@ -6,20 +6,26 @@ type SearchParams = Promise<{ q?: string; categoria?: string; cidade?: string }>
 export default async function BuscarPage(props: { searchParams: SearchParams }) {
   const { q, categoria, cidade } = await props.searchParams;
 
-  const where = {
-    AND: [
-      q
-        ? {
-            OR: [
-              { nome: { contains: q, mode: "insensitive" } },
-              { descricao: { contains: q, mode: "insensitive" } },
-            ],
-          }
-        : {},
-      categoria ? { categoriaId: categoria } : {},
-      cidade ? { cidade: { contains: cidade, mode: "insensitive" } } : {},
-    ],
-  } as const;
+  const whereConditions = [];
+  
+  if (q) {
+    whereConditions.push({
+      OR: [
+        { nome: { contains: q, mode: "insensitive" } },
+        { descricao: { contains: q, mode: "insensitive" } },
+      ],
+    });
+  }
+  
+  if (categoria) {
+    whereConditions.push({ categoriaId: categoria });
+  }
+  
+  if (cidade) {
+    whereConditions.push({ cidade: { contains: cidade, mode: "insensitive" } });
+  }
+  
+  const where = whereConditions.length > 0 ? { AND: whereConditions } : {};
 
   const [profissionais, categorias] = await Promise.all([
     prisma.profissional.findMany({
