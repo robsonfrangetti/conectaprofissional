@@ -23,6 +23,9 @@ export default async function Home() {
             ))}
           </div>
         </div>
+        <div className="mt-8 text-sm text-gray-500">
+          <p>Site funcionando! Deploy: {new Date().toLocaleString()}</p>
+        </div>
       </section>
     </main>
   );
