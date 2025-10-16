@@ -1,0 +1,9 @@
+{
+  "buildCommand": "prisma migrate deploy && next build",
+  "installCommand": "npm ci",
+  "env": {
+    "DATABASE_URL": ""
+  }
+}
+
+

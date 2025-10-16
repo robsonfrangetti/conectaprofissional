@@ -1,0 +1,64 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Usuario {
+  id           String      @id @default(cuid())
+  nome         String
+  email        String      @unique
+  senhaHash    String
+  avaliacoes   Avaliacao[]
+  profissional Profissional?
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+}
+
+model Categoria {
+  id            String         @id @default(cuid())
+  nome          String         @unique
+  profissionais Profissional[]
+}
+
+model Profissional {
+  id               String        @id @default(cuid())
+  nome             String
+  email            String        @unique
+  telefone         String?
+  descricao        String?
+  cidade           String?
+  estado           String?
+  mediaEstrelas    Float         @default(0)
+  totalAvaliacoes  Int           @default(0)
+  categoriaId      String
+  categoria        Categoria     @relation(fields: [categoriaId], references: [id])
+  usuarioId        String?
+  usuario          Usuario?      @relation(fields: [usuarioId], references: [id])
+  avaliacoes       Avaliacao[]
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+
+  @@index([categoriaId])
+  @@unique([usuarioId])
+}
+
+model Avaliacao {
+  id              String        @id @default(cuid())
+  estrelas        Int
+  comentario      String?
+  autorId         String
+  autor           Usuario       @relation(fields: [autorId], references: [id])
+  profissionalId  String
+  profissional    Profissional  @relation(fields: [profissionalId], references: [id])
+  createdAt       DateTime      @default(now())
+
+  @@index([profissionalId])
+  @@index([autorId])
+}
