@@ -1,8 +1,42 @@
-import Link from "next/link";
-import { prisma } from "@/lib/prisma";
+"use client";
 
-export default async function Home() {
-  const categorias = await prisma.categoria.findMany({ orderBy: { nome: "asc" } });
+import Link from "next/link";
+import { useState, useEffect } from "react";
+import LocationModal from "@/components/LocationModal";
+
+export default function Home() {
+  const [categorias, setCategorias] = useState([]);
+  const [isLocationModalOpen, setIsLocationModalOpen] = useState(false);
+  const [userLocation, setUserLocation] = useState<{estado: string, cidade: string} | null>(null);
+
+  useEffect(() => {
+    // Buscar categorias
+    fetch('/api/categorias')
+      .then(res => res.json())
+      .then(data => setCategorias(data))
+      .catch(err => console.error('Erro ao buscar categorias:', err));
+
+    // Verificar se já tem localização salva
+    const savedLocation = localStorage.getItem('userLocation');
+    if (savedLocation) {
+      setUserLocation(JSON.parse(savedLocation));
+    } else {
+      // Abrir modal de localização após 2 segundos se não tiver localização salva
+      setTimeout(() => {
+        setIsLocationModalOpen(true);
+      }, 2000);
+    }
+  }, []);
+
+  const handleLocationSelect = (estado: string, cidade: string) => {
+    const location = { estado, cidade };
+    setUserLocation(location);
+    localStorage.setItem('userLocation', JSON.stringify(location));
+  };
+
+  const handleOpenLocationModal = () => {
+    setIsLocationModalOpen(true);
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -13,12 +47,36 @@ export default async function Home() {
             <div className="flex items-center">
               <h1 className="text-2xl font-bold text-blue-600">ConectaProfissional</h1>
             </div>
-            <nav className="hidden md:flex space-x-8">
-              <Link href="/" className="text-gray-900 hover:text-blue-600">Início</Link>
-              <Link href="/buscar" className="text-gray-900 hover:text-blue-600">Profissionais</Link>
-              <Link href="/cadastro" className="text-gray-900 hover:text-blue-600">Cadastrar-se</Link>
-              <Link href="/contato" className="text-gray-900 hover:text-blue-600">Contato</Link>
-            </nav>
+            <div className="flex items-center space-x-6">
+              {/* Location Indicator */}
+              <div className="flex items-center space-x-2">
+                {userLocation ? (
+                  <button
+                    onClick={handleOpenLocationModal}
+                    className="flex items-center space-x-2 text-gray-600 hover:text-blue-600 transition-colors"
+                  >
+                    <span className="text-sm">📍</span>
+                    <span className="text-sm font-medium">
+                      {userLocation.cidade}, {userLocation.estado}
+                    </span>
+                  </button>
+                ) : (
+                  <button
+                    onClick={handleOpenLocationModal}
+                    className="flex items-center space-x-2 text-gray-600 hover:text-blue-600 transition-colors"
+                  >
+                    <span className="text-sm">📍</span>
+                    <span className="text-sm">Selecionar localização</span>
+                  </button>
+                )}
+              </div>
+              <nav className="hidden md:flex space-x-8">
+                <Link href="/" className="text-gray-900 hover:text-blue-600">Início</Link>
+                <Link href="/buscar" className="text-gray-900 hover:text-blue-600">Profissionais</Link>
+                <Link href="/cadastro" className="text-gray-900 hover:text-blue-600">Cadastrar-se</Link>
+                <Link href="/contato" className="text-gray-900 hover:text-blue-600">Contato</Link>
+              </nav>
+            </div>
           </div>
         </div>
       </header>
@@ -143,6 +201,13 @@ export default async function Home() {
           </div>
         </div>
       </footer>
+
+      {/* Location Modal */}
+      <LocationModal
+        isOpen={isLocationModalOpen}
+        onClose={() => setIsLocationModalOpen(false)}
+        onLocationSelect={handleLocationSelect}
+      />
     </div>
   );
 }

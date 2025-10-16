@@ -22,6 +22,35 @@ model Usuario {
   updatedAt    DateTime    @updatedAt
 }
 
+model Estado {
+  id       String     @id @default(cuid())
+  nome     String     @unique
+  uf       String     @unique
+  cidades  Cidade[]
+  profissionais Profissional[]
+}
+
+model Cidade {
+  id          String        @id @default(cuid())
+  nome        String
+  estadoId    String
+  estado      Estado        @relation(fields: [estadoId], references: [id])
+  bairros     Bairro[]
+  profissionais Profissional[]
+  
+  @@unique([nome, estadoId])
+}
+
+model Bairro {
+  id            String        @id @default(cuid())
+  nome          String
+  cidadeId      String
+  cidade        Cidade        @relation(fields: [cidadeId], references: [id])
+  profissionais Profissional[]
+  
+  @@unique([nome, cidadeId])
+}
+
 model Categoria {
   id            String         @id @default(cuid())
   nome          String         @unique
@@ -34,12 +63,16 @@ model Profissional {
   email            String        @unique
   telefone         String?
   descricao        String?
-  cidade           String?
-  estado           String?
   mediaEstrelas    Float         @default(0)
   totalAvaliacoes  Int           @default(0)
   categoriaId      String
   categoria        Categoria     @relation(fields: [categoriaId], references: [id])
+  estadoId         String?
+  estado           Estado?       @relation(fields: [estadoId], references: [id])
+  cidadeId         String?
+  cidade           Cidade?       @relation(fields: [cidadeId], references: [id])
+  bairroId         String?
+  bairro           Bairro?       @relation(fields: [bairroId], references: [id])
   usuarioId        String?
   usuario          Usuario?      @relation(fields: [usuarioId], references: [id])
   avaliacoes       Avaliacao[]
@@ -47,6 +80,9 @@ model Profissional {
   updatedAt        DateTime      @updatedAt
 
   @@index([categoriaId])
+  @@index([estadoId])
+  @@index([cidadeId])
+  @@index([bairroId])
   @@unique([usuarioId])
 }
 
