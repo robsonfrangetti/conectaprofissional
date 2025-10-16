@@ -1,9 +1,6 @@
 import Link from "next/link";
-import { prisma } from "@/lib/prisma";
 
-export default async function Home() {
-  const categorias = await prisma.categoria.findMany({ orderBy: { nome: "asc" } });
-
+export default function Home() {
   return (
     <main className="min-h-screen bg-white text-gray-900">
       <section className="mx-auto max-w-5xl px-6 py-16">
@@ -15,12 +12,15 @@ export default async function Home() {
         <div className="mt-12">
           <h2 className="text-xl font-semibold">Categorias</h2>
           <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3">
-            {categorias.length === 0 && <p className="text-gray-500">Sem categorias ainda.</p>}
-            {categorias.map((c) => (
-              <Link key={c.id} href={`/buscar?categoria=${encodeURIComponent(c.id)}`} className="rounded-md border p-4 hover:bg-gray-50">
-                <span className="font-medium">{c.nome}</span>
-              </Link>
-            ))}
+            <div className="rounded-md border p-4 hover:bg-gray-50">
+              <span className="font-medium">Advocacia</span>
+            </div>
+            <div className="rounded-md border p-4 hover:bg-gray-50">
+              <span className="font-medium">Contabilidade</span>
+            </div>
+            <div className="rounded-md border p-4 hover:bg-gray-50">
+              <span className="font-medium">Informática</span>
+            </div>
           </div>
         </div>
         <div className="mt-8 text-sm text-gray-500">
