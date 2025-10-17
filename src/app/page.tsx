@@ -93,7 +93,7 @@ export default function Home() {
           <div className="text-center">
             <h2 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">
               Encontre os <span className="text-yellow-400">melhores</span><br />
-              profissionais
+              profissionais do Brasil
             </h2>
             <p className="text-xl md:text-2xl mb-8 text-blue-100 max-w-3xl mx-auto">
               Conectamos você aos especialistas mais qualificados em qualquer área, 
