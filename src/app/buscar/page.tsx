@@ -24,12 +24,16 @@ export default async function BuscarPage(props: { searchParams: SearchParams }) 
   }
 
   const [profissionais, categorias] = await Promise.all([
-    prisma.profissional.findMany({
-      where,
-      orderBy: [{ mediaEstrelas: "desc" }, { totalAvaliacoes: "desc" }],
-      include: { categoria: true },
-      take: 50,
-    }),
+           prisma.profissional.findMany({
+             where,
+             orderBy: [{ mediaEstrelas: "desc" }, { totalAvaliacoes: "desc" }],
+             include: { 
+               categoria: true,
+               cidade: true,
+               estado: true
+             },
+             take: 50,
+           }),
     prisma.categoria.findMany({ orderBy: { nome: "asc" } }),
   ]);
 
@@ -135,9 +139,9 @@ export default async function BuscarPage(props: { searchParams: SearchParams }) 
                     <div className="flex-1">
                       <h3 className="text-lg font-semibold text-gray-900 mb-1">{p.nome}</h3>
                       <p className="text-sm text-blue-600 font-medium">{p.categoria?.nome}</p>
-                      {p.cidade && (
-                        <p className="text-sm text-gray-500">📍 {p.cidade}, {p.estado}</p>
-                      )}
+                       {p.cidade?.nome && (
+                         <p className="text-sm text-gray-500">📍 {p.cidade.nome}, {p.estado?.nome}</p>
+                       )}
                     </div>
                     <div className="text-right">
                       <div className="flex items-center mb-1">

@@ -279,7 +279,7 @@ export default function Home() {
                 <p className="text-gray-500 text-lg">Sem categorias disponíveis no momento.</p>
               </div>
             ) : (
-              categorias.map((categoria) => (
+              categorias.map((categoria: any) => (
                 <Link
                   key={categoria.id}
                   href={`/buscar?categoria=${encodeURIComponent(categoria.id)}`}
@@ -381,7 +381,7 @@ export default function Home() {
             <div>
               <h5 className="font-semibold mb-4">Categorias</h5>
               <ul className="space-y-2 text-gray-400">
-                {categorias.slice(0, 4).map((categoria) => (
+                     {categorias.slice(0, 4).map((categoria: any) => (
                   <li key={categoria.id}>
                     <Link href={`/buscar?categoria=${encodeURIComponent(categoria.id)}`} className="hover:text-white">
                       {categoria.nome}
