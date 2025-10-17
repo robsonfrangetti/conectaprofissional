@@ -253,6 +253,22 @@ async function main() {
     }
   }
 
+  // Criar usuário administrador
+  console.log('👑 Criando usuário administrador...');
+  const adminSenhaHash = crypto.createHash('sha256').update('Rq12032985@;').digest('hex');
+  
+  await prisma.usuario.upsert({
+    where: { email: 'robson.frangetti@gmail.com' },
+    update: {},
+    create: {
+      nome: 'Robson Frangetti',
+      email: 'robson.frangetti@gmail.com',
+      senhaHash: adminSenhaHash,
+      role: 'admin',
+      isActive: true,
+    },
+  });
+
   console.log('✅ Seed concluído com sucesso!');
 }
 

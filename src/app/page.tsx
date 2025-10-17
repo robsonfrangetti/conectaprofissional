@@ -2,9 +2,11 @@
 
 import Link from "next/link";
 import { useState, useEffect } from "react";
+import { useSession, signOut } from "next-auth/react";
 import LocationModal from "@/components/LocationModal";
 
 export default function Home() {
+  const { data: session } = useSession();
   const [categorias, setCategorias] = useState([]);
   const [isLocationModalOpen, setIsLocationModalOpen] = useState(false);
   const [userLocation, setUserLocation] = useState<{estado: string, cidade: string} | null>(null);
@@ -70,12 +72,28 @@ export default function Home() {
                   </button>
                 )}
               </div>
-              <nav className="hidden md:flex space-x-8">
-                <Link href="/" className="text-gray-900 hover:text-blue-600">Início</Link>
-                <Link href="/buscar" className="text-gray-900 hover:text-blue-600">Profissionais</Link>
-                <Link href="/cadastro" className="text-gray-900 hover:text-blue-600">Cadastrar-se</Link>
-                <Link href="/contato" className="text-gray-900 hover:text-blue-600">Contato</Link>
-              </nav>
+                   <nav className="hidden md:flex space-x-8">
+                     <Link href="/" className="text-gray-900 hover:text-blue-600">Início</Link>
+                     <Link href="/buscar" className="text-gray-900 hover:text-blue-600">Profissionais</Link>
+                     <Link href="/cadastro" className="text-gray-900 hover:text-blue-600">Cadastrar-se</Link>
+                     <Link href="/contato" className="text-gray-900 hover:text-blue-600">Contato</Link>
+                     {session ? (
+                       <div className="flex items-center space-x-4">
+                         {session.user.role === 'admin' && (
+                           <Link href="/admin" className="text-gray-900 hover:text-blue-600">Admin</Link>
+                         )}
+                         <span className="text-gray-600">Olá, {session.user.name}</span>
+                         <button 
+                           onClick={() => signOut()}
+                           className="text-gray-900 hover:text-blue-600"
+                         >
+                           Sair
+                         </button>
+                       </div>
+                     ) : (
+                       <Link href="/login" className="text-gray-900 hover:text-blue-600">Login</Link>
+                     )}
+                   </nav>
             </div>
           </div>
         </div>

@@ -16,6 +16,8 @@ model Usuario {
   nome         String
   email        String      @unique
   senhaHash    String
+  role         String      @default("user") // "user", "admin", "professional"
+  isActive     Boolean     @default(true)
   avaliacoes   Avaliacao[]
   profissional Profissional?
   createdAt    DateTime    @default(now())
